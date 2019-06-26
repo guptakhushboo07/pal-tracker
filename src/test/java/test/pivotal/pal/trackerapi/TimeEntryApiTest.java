@@ -13,10 +13,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import java.time.LocalDate;
 import java.util.Collection;
-
 import static com.jayway.jsonpath.JsonPath.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -51,17 +49,11 @@ public class TimeEntryApiTest {
     public void testList() throws Exception {
         Long id = createTimeEntry();
 
-
-        ResponseEntity<String> listResponse = restTemplate.getForEntity("/time-entries", String.class);
-
-
-        assertThat(listResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        DocumentContext listJson = parse(listResponse.getBody());
-
+        ResponseEntity<String> listResponse1 = restTemplate.getForEntity("/time-entries", String.class);
+        assertThat(listResponse1.getStatusCode()).isEqualTo(HttpStatus.OK);
+        DocumentContext listJson = parse(listResponse1.getBody());
         Collection timeEntries = listJson.read("$[*]", Collection.class);
         assertThat(timeEntries.size()).isEqualTo(1);
-
         Long readId = listJson.read("$[0].id", Long.class);
         assertThat(readId).isEqualTo(id);
     }
@@ -124,7 +116,8 @@ public class TimeEntryApiTest {
         ResponseEntity<TimeEntry> response = restTemplate.exchange("/time-entries", HttpMethod.POST, entity, TimeEntry.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
         return response.getBody().getId();
+
+
     }
 }
